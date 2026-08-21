@@ -18,3 +18,12 @@ class Bullet(Sprite):
 
         # позиция снаряда хранится в вещесвенном формате.
         self.y = float(self.rect.y)
+
+    def update(self):
+        """Перемещает снаряд вверх по экрану."""
+        self.y -= self.settings.bullet_speed
+        self.rect.y = self.y
+
+    def draw_bullet(self):
+        """Выводит снаряд на экран."""
+        pygame.draw.rect(self.screen, self.color, self.rect)

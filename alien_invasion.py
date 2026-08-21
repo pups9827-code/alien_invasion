@@ -4,7 +4,6 @@ import pygame
 from settings import Settings
 from ship import Ship
 from bullet import Bullet
-from character import Character
 
 class AlienInvasion:
     """Класс для управления ресурсами и поведением игры."""
@@ -14,17 +13,15 @@ class AlienInvasion:
         self.clock = pygame.time.Clock()
         self.settings = Settings()
 
-
         # Полноэкранный режим
-        self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
+        self.screen = pygame.display.set_mode((1200, 800))
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
 
         pygame.display.set_caption("Alien invasion")
 
         self.ship = Ship(self)
-        self.character = Character(self)
-        self.bullets = pygame.sprite
+        self.bullets = pygame.sprite.Group()
 
     def run_game(self):
         """Запускает основной цикл игры."""
@@ -41,8 +38,6 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-
-            # ВАЖНО: добавляем обработку отпускания клавиш
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
             elif event.type == pygame.KEYUP:
@@ -56,6 +51,8 @@ class AlienInvasion:
             self.ship.moving_left = True
         elif event.key == pygame.K_q:
             sys.exit()
+        elif event.key == pygame.K_SPACE:
+            self._fire_bullet()
 
     def _check_keyup_events(self, event):
         """Реагирует на отпускание клавиш."""
@@ -63,19 +60,25 @@ class AlienInvasion:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
-        # УБРАНО: никакого ship.rect.x += 10 — это ломало движение
+
+    def _fire_bullet(self):
+        """Создает новый снаряд и добавляет его в группу bullets."""
+        new_bullet = Bullet(self)
+        self.bullets.add(new_bullet)
 
     def _update_screen(self):
         """Обновляет изображение на экране."""
         self.screen.fill(self.settings.bg_color)
+        for bullet in self.bullets.sprites():
+            bullet.draw_bullet()
         self.ship.blitme()
-        self.character.blitme()
         pygame.display.flip()
 
 
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
+
 
 
 
