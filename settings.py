@@ -1,3 +1,5 @@
+import pygame
+
 class Settings:
     """Класс для хранения все настроек игры "иноплонетное сражение". """
 
@@ -16,3 +18,14 @@ class Settings:
         self.bullet_width = 3
         self.bullet_height = 15
         self.bullet_color = (60, 60, 60)
+
+    def update(self):
+        """Перемещает снаряд вверх по экрану. """
+        # обновление точной позиции снаряда.
+        self.y -= self.settings.bullet_speed
+        # обновление позиции прямоугольника.
+        self.rect.y = self.y
+
+    def draw_bullet(self):
+        """Выводит снаряд на экран."""
+        pygame.draw.rect(self.screen, self.color, self.rect)

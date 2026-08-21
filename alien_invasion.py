@@ -3,6 +3,7 @@ import pygame
 
 from settings import Settings
 from ship import Ship
+from bullet import Bullet
 from character import Character
 
 class AlienInvasion:
@@ -12,19 +13,25 @@ class AlienInvasion:
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
+
+
+        # Полноэкранный режим
         self.screen = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
         self.settings.screen_width = self.screen.get_rect().width
         self.settings.screen_height = self.screen.get_rect().height
+
         pygame.display.set_caption("Alien invasion")
 
         self.ship = Ship(self)
         self.character = Character(self)
+        self.bullets = pygame.sprite
 
     def run_game(self):
         """Запускает основной цикл игры."""
         while True:
             self._check_events()
             self.ship.update()
+            self.bullets.update()
             self._update_screen()
             self.clock.tick(60)
 
@@ -34,11 +41,15 @@ class AlienInvasion:
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
+
+            # ВАЖНО: добавляем обработку отпускания клавиш
             elif event.type == pygame.KEYDOWN:
                 self._check_keydown_events(event)
+            elif event.type == pygame.KEYUP:
+                self._check_keyup_events(event)
 
     def _check_keydown_events(self, event):
-        """Реагирует на нажатие клавишь."""
+        """Реагирует на нажатие клавиш."""
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = True
         elif event.key == pygame.K_LEFT:
@@ -47,16 +58,15 @@ class AlienInvasion:
             sys.exit()
 
     def _check_keyup_events(self, event):
-        """Реагирует на отпускание клавишь."""
+        """Реагирует на отпускание клавиш."""
         if event.key == pygame.K_RIGHT:
             self.ship.moving_right = False
         elif event.key == pygame.K_LEFT:
             self.ship.moving_left = False
-            # Переместить корабль вправо.
-            self.ship.rect.x += 10
+        # УБРАНО: никакого ship.rect.x += 10 — это ломало движение
 
     def _update_screen(self):
-        """Обновляет изображение на экрdане."""
+        """Обновляет изображение на экране."""
         self.screen.fill(self.settings.bg_color)
         self.ship.blitme()
         self.character.blitme()
@@ -66,3 +76,7 @@ class AlienInvasion:
 if __name__ == '__main__':
     ai = AlienInvasion()
     ai.run_game()
+
+
+
+
