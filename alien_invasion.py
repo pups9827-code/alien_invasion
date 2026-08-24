@@ -28,7 +28,7 @@ class AlienInvasion:
         while True:
             self._check_events()
             self.ship.update()
-            self.bullets.update()
+            self._update_bullets()
             self._update_screen()
             self.clock.tick(60)
 
@@ -63,8 +63,9 @@ class AlienInvasion:
 
     def _fire_bullet(self):
         """Создает новый снаряд и добавляет его в группу bullets."""
-        new_bullet = Bullet(self)
-        self.bullets.add(new_bullet)
+        if len(self.bullets) < self.settings.bullets_allowed:
+            new_bullet = Bullet(self)
+            self.bullets.add(new_bullet)
 
     def _update_screen(self):
         """Обновляет изображение на экране."""
@@ -74,6 +75,14 @@ class AlienInvasion:
         self.ship.blitme()
         pygame.display.flip()
 
+    def _update_bullets(self):
+        """обновляет позиции снарядов и уничтожает старые"""
+        # обновление позиций снарядов.
+        self.bullets.update()
+        # Удаление снарядов, вышедших за край экрана.
+        for bullet in self.bullets.copy():
+            if bullet.rect.bottom <= 0:
+                self.bullets.remove(bullet)
 
 if __name__ == '__main__':
     ai = AlienInvasion()
