@@ -91,6 +91,13 @@ class AlienInvasion:
             if bullet.rect.bottom <= 0:
                 self.bullets.remove(bullet)
 
+        self._check_bullet_alien_collisions()
+
+    def _update_aliens(self):
+        """обновляет позиции всех пришельцев во флоте"""
+        self._check_fleet_edges()
+        self.aliens.update()
+
     def _create_fleet(self):
         """Создает флот пришельцев"""
         # создание пришельца и вычесление количесво пришельцев в ряду.
@@ -116,6 +123,28 @@ class AlienInvasion:
         new_alien.rect.y = y_position
         self.aliens.add(new_alien)
 
+    def _check_fleet_edges(self):
+        """Реагирует на достижение пришельцов края экрана."""
+        for alien in self.aliens.sprites():
+            if alien.check_edges():
+                self._change_fleet_direction()
+                break
+
+    def _change_fleet_direction(self):
+        """Отпускает весь флот и менятет направление."""
+        for alien in self.aliens.sprites():
+            alien.rect.y += self.settings.fleet_drop_speed
+        self.settings.fleet_direction *= -1
+
+    def _check_bullet_alien_collisions(self):
+        """обрабытывает коллизии снарядов с пришельцами."""
+        # удаление снарядов и пришельцев, учавствующих в коллизиях.
+        collisions = pygame.sprite.groupcollide(
+            self.bullets, self.aliens, True, True)
+        if not self.aliens:
+            # уничтожает существующих сранярдов и создание нового флота.
+            self.bullets.empty()
+            self._create_fleet()
 
 if __name__ == '__main__':
     ai = AlienInvasion()

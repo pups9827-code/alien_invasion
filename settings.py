@@ -14,14 +14,18 @@ class Settings:
         self.ship_speed = 1.5
 
         # параметры снаряда
-        self.bullet_speed = 2.0
-        self.bullet_width = 3
-        self.bullet_height = 15
+        self.bullet_speed = 3.0
+        self.bullet_width = 5
+        self.bullet_height = 20
         self.bullet_color = (255, 255, 0)
         self.bullets_allowed = 3
 
         # настройка пришельцев
         self.alien_speed = 1.0
+        self.fleet_drop_speed = 10
+        # fleet_direction = 1 обозначает движение вправо; a -1 - влево.
+        self.fleet_direction = 1
+        
 
     def update(self):
         """Перемещает снаряд вверх по экрану. """

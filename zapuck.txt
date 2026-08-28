@@ -1,1 +1,6 @@
 python -u "/Users/aleksandrgoncarenko/Desktop/alien_invasion/alien_invasion.py"
+
+через терминал
+cd "/Users/aleksandrgoncarenko/Desktop/alien_invasion"
+source .venv/bin/activate
+python alien_invasion.py
