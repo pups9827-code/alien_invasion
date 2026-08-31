@@ -12,6 +12,8 @@ class Settings:
 
         # Насройки коробля
         self.ship_speed = 1.5
+        self.ship_limit = 3
+    
 
         # параметры снаряда
         self.bullet_speed = 3.0

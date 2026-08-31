@@ -1,7 +1,9 @@
 import sys
+from time import sleep
 import pygame
 
 from settings import Settings
+from game_stats import GameStats
 from ship import Ship
 from bullet import Bullet
 from alien import Alien
@@ -21,6 +23,9 @@ class AlienInvasion:
         self.settings.screen_height = self.screen.get_rect().height
 
         pygame.display.set_caption("Alien invasion")
+
+        # создаем экземпляр для хранения игровой статистики.
+        self.stats = GameStats(self)
 
         self.ship = Ship(self)
         self.bullets = pygame.sprite.Group()
@@ -98,6 +103,11 @@ class AlienInvasion:
         self._check_fleet_edges()
         self.aliens.update()
 
+        # проверка коллизий "пришелец - корабль".
+        if pygame.sprite.spritecollideany(self.ship, self.aliens):
+            self._ship_hit()
+            
+
     def _create_fleet(self):
         """Создает флот пришельцев"""
         # создание пришельца и вычесление количесво пришельцев в ряду.
@@ -145,6 +155,22 @@ class AlienInvasion:
             # уничтожает существующих сранярдов и создание нового флота.
             self.bullets.empty()
             self._create_fleet()
+
+    def _ship_hit(self):
+        """Обрабатывает столкновения корабля с пришельцами. """
+        # уменьшение ships_left.
+        self.stats.ships_left -= 1
+
+        # отчистка групп aliens и bullets.
+        self.aliens.empty()
+        self.bullets.empty()
+
+        # создание нового флота и размешение кораблей в центре.
+        self._create_fleet()
+        self.ship.center_ship()
+
+        # пауза.
+        sleep(1)
 
 if __name__ == '__main__':
     ai = AlienInvasion()
