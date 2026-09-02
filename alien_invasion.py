@@ -12,7 +12,7 @@ from alien import Alien
 class AlienInvasion:
     """Класс для управления ресурсами и поведением игры."""
 
-    def __init__(self):
+    def __init__(self, ai_game):
         pygame.init()
         self.clock = pygame.time.Clock()
         self.settings = Settings()
@@ -33,13 +33,19 @@ class AlienInvasion:
 
         self._create_fleet()
 
+        # Игра "инопланетное вторжение" запускается в активном состоянии.
+        self.game_active = True
+
     def run_game(self):
         """Запускает основной цикл игры."""
         while True:
             self._check_events()
-            self.ship.update()
-            self._update_bullets()
-            self._update_aliens()
+
+            if self.game_active:
+                self.ship.update()
+                self._update_bullets()
+                self._update_aliens()
+
             self._update_screen()
             self.clock.tick(60)
 
@@ -106,7 +112,8 @@ class AlienInvasion:
         # проверка коллизий "пришелец - корабль".
         if pygame.sprite.spritecollideany(self.ship, self.aliens):
             self._ship_hit()
-            
+
+        self._check_aliens_bottom()
 
     def _create_fleet(self):
         """Создает флот пришельцев"""
@@ -156,21 +163,32 @@ class AlienInvasion:
             self.bullets.empty()
             self._create_fleet()
 
+    def _check_aliens_bottom(self):
+        """Проверяет, добрались ли пришельцы до нижнего края экрана."""
+        for alien in self.aliens.sprites():
+            if alien.rect.bottom >= self.settings.screen_height:
+                # Происходит то же, что при столкновении с короблем.
+                self._ship_hit()
+                break
+
     def _ship_hit(self):
         """Обрабатывает столкновения корабля с пришельцами. """
-        # уменьшение ships_left.
-        self.stats.ships_left -= 1
+        if self.stats.ships_left > 0:
+            # уменьшение ships_left.
+            self.stats.ships_left -= 1
 
-        # отчистка групп aliens и bullets.
-        self.aliens.empty()
-        self.bullets.empty()
+            # отчистка групп aliens и bullets.
+            self.aliens.empty()
+            self.bullets.empty()
 
-        # создание нового флота и размешение кораблей в центре.
-        self._create_fleet()
-        self.ship.center_ship()
+            # создание нового флота и размешение кораблей в центре.
+            self._create_fleet()
+            self.ship.center_ship()
 
-        # пауза.
-        sleep(1)
+            # пауза.
+            sleep(1)
+        else:
+            self.game_active = False
 
 if __name__ == '__main__':
     ai = AlienInvasion()
