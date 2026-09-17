@@ -36,6 +36,9 @@ class AlienInvasion:
         # Игра "инопланетное вторжение" запускается в активном состоянии.
         self.game_active = True
 
+        # игра запускается в неактивном состояние.
+        self.game_active = False
+
     def run_game(self):
         """Запускает основной цикл игры."""
         while True:
